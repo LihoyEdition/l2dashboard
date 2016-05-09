@@ -1,0 +1,20 @@
+<div class="container">
+	<div class="row">
+		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="server in $ctrl.serverStats">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					{{server.name}} [id = {{server.id}}]
+				</div>
+				<div class="panel-body">
+					<p>Status:
+						<span ng-class="{'text-success': server.status == 'UP', 'text-danger': server.status == 'DOWN'}">
+							<b>{{server.status}}</b>
+						</span>
+					</p>
+					<p>Current online: {{server.currentOnline}}</p>
+					<p>Free memory: {{server.freeMemory}} KB</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

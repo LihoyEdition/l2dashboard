@@ -1,0 +1,25 @@
+<div class="container">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<form class="form-inline">
+				<div class="form-group">
+					<label for="historyType">Type</label>
+					<select id="historyType" name="historyType" class="form-control"
+							ng-options="option.name for option in $ctrl.historyType.options track by option.id"
+							ng-model="$ctrl.historyType.selected" ng-change="$ctrl.buildChart()"></select>
+				</div>
+				<div class="form-group" ng-show="$ctrl.isHistoryOnlineSelected()">
+					<label for="server">Server</label>
+					<select id="server" name="server" class="form-control"
+							ng-options="option.name for option in $ctrl.serverIds.options track by option.id"
+							ng-model="$ctrl.serverIds.selected" ng-change="$ctrl.buildChart()"></select>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<nvd3 data="$ctrl.chartData" options="$ctrl.chartOptions" class="with-3d-shadow with-transitions"></nvd3>
+		</div>
+	</div>
+</div>

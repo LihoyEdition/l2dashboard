@@ -1,0 +1,17 @@
+<nav class="navbar navbar-default navbar-static-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="/"><span class="glyphicon glyphicon-dashboard"></span> L2Dashboard</a>
+		</div>
+
+		<ul class="navbar-nav nav">
+			<li ng-class="{active: $ctrl.isActive(['Dashboard'])}">
+				<a ng-link="['Dashboard']">Main</a>
+			</li>
+			<li ng-class="{active: $ctrl.isActive(['History'])}">
+				<a ng-link="['History']">History</a>
+			</li>
+		</ul>
+	</div>
+</nav>
+<ng-outlet>Loading...</ng-outlet>
