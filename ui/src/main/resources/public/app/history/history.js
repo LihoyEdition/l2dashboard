@@ -1,4 +1,4 @@
-function HistoryController($http, $timeout) {
+function HistoryController($http) {
 	var ctrl = this;
 
 	ctrl.historyType = new (function () {
@@ -39,21 +39,20 @@ function HistoryController($http, $timeout) {
 			},
 			xAxis: {
 				tickFormat: function (d) {
-					return d3.time.format("%Y-%m-%d")(new Date(d));
+					return d3.time.format("%d.%m.%y")(new Date(d));
 				},
 				showMaxMin: false
 			},
 			x2Axis: {
 				tickFormat: function (d) {
-					return d3.time.format("%Y-%m-%d")(new Date(d));
+					return d3.time.format("%d.%m.%y")(new Date(d));
 				},
 				showMaxMin: false
 			},
 			yAxis: {
 				showMaxMin: false
 			},
-			clipEdge: false,
-			average: 1000
+			clipEdge: false
 		}
 	};
 
@@ -63,8 +62,8 @@ function HistoryController($http, $timeout) {
 		$http.get(url, config).then(function successCallback(response) {
 			if (ctrl.isHistoryOnlineSelected()) {
 				ctrl.chartData = [
-					{key: "Average", values: [], mean: response.data.averageOnline},
-					{key: "Maximum", values: [], mean: response.data.maxOnline}
+					{key: "Average", values: []},
+					{key: "Maximum", values: []}
 				];
 				response.data.history.forEach(function (history) {
 					ctrl.chartData[0].values.push({date: history.date, y: history.averageOnline});
@@ -82,12 +81,10 @@ function HistoryController($http, $timeout) {
 				};
 			}
 
-			// Trick for avoiding bug when uses the same period for focusing
 			var lastDate = new Date(response.data.history[response.data.history.length - 1].date);
-			ctrl.chartOptions.chart.brushExtent = null;
-			$timeout(function () {
-				ctrl.chartOptions.chart.brushExtent = [d3.time.month.offset(lastDate, -1), lastDate];
-			}, 100);
+			ctrl.chartOptions.chart.brushExtent = [d3.time.month.offset(lastDate, -1), lastDate];
+
+			ctrl.api.refresh();
 		});
 	};
 
@@ -98,7 +95,7 @@ function HistoryController($http, $timeout) {
 
 const HistoryComponent = {
 	templateUrl: "app/history/history.html",
-	controller: ["$http", "$timeout", HistoryController]
+	controller: ["$http", HistoryController]
 };
 
 angular.module("history", ["nvd3"]).component("history", HistoryComponent);
