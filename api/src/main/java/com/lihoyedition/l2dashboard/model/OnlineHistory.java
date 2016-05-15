@@ -8,7 +8,6 @@ import java.util.Set;
 /**
  * @author Lihoy, 02.05.2016
  */
-
 public class OnlineHistory {
 
     private int serverId;

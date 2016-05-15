@@ -11,16 +11,14 @@ function HistoryController($http) {
 
 	ctrl.serverIds = loadServerIds();
 
-	// TODO: Stub. Should be loaded from backend.
 	function loadServerIds() {
-		var serverIds = {
-			options: [
-				{id: 1, name: "x1"},
-				{id: 2, name: "x50"},
-				{id: 3, name: "x100"}
-			]
-		};
-		serverIds.selected = serverIds.options[0];
+		var serverIds = {};
+		$http.get("/servers").then(function successCallback(response) {
+			serverIds.options = response.data.map(function (server) {
+				return {id: server.id, name: server.name};
+			});
+			serverIds.selected = serverIds.options[0];
+		});
 		return serverIds;
 	}
 

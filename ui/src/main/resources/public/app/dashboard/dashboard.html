@@ -1,6 +1,6 @@
 <div class="container">
 	<div class="row">
-		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="server in $ctrl.serverStats">
+		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="server in $ctrl.serversInfo">
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					{{server.name}} [id = {{server.id}}]
@@ -12,7 +12,7 @@
 						</span>
 					</p>
 					<p>Current online: {{server.currentOnline}}</p>
-					<p>Free memory: {{server.freeMemory}} KB</p>
+					<p>Free memory: {{server.freeMemory}} {{server.memoryUnit}}</p>
 				</div>
 			</div>
 		</div>

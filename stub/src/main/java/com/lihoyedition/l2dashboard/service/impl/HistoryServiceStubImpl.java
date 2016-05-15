@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * @author Lihoy, 02.05.2016
  */
-
 @Service
 public class HistoryServiceStubImpl implements HistoryService {
 
@@ -57,6 +56,12 @@ public class HistoryServiceStubImpl implements HistoryService {
         onlineHistory = new OnlineHistory(3);
         for (LocalDate date = LocalDate.of(2015, 1, 1); date.isBefore(LocalDate.now()); date = date.plusDays(1)) {
             onlineHistory.add(date, RANDOM.nextInt(5000, 5500), RANDOM.nextInt(4700, 5000));
+            onlineHistories.add(onlineHistory);
+        }
+
+        onlineHistory = new OnlineHistory(4);
+        for (LocalDate date = LocalDate.of(2016, 1, 1); date.isBefore(LocalDate.now()); date = date.plusDays(1)) {
+            onlineHistory.add(date, RANDOM.nextInt(800, 1000), RANDOM.nextInt(500, 800));
             onlineHistories.add(onlineHistory);
         }
     }

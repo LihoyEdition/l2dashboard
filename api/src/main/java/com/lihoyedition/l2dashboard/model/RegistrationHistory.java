@@ -7,7 +7,6 @@ import java.util.Set;
 /**
  * @author Lihoy, 02.05.2016
  */
-
 public class RegistrationHistory {
 
     private Set<RegistrationMeasuredData> history;
@@ -17,7 +16,7 @@ public class RegistrationHistory {
     }
 
     public void add(LocalDate date, int registrationCount) {
-        history.add(new RegistrationHistory.RegistrationMeasuredData(date, registrationCount));
+        history.add(new RegistrationMeasuredData(date, registrationCount));
     }
 
     public Set<RegistrationMeasuredData> getHistory() {
@@ -29,7 +28,7 @@ public class RegistrationHistory {
         private LocalDate date;
         private int registrationCount;
 
-        public RegistrationMeasuredData(LocalDate date, int registrationCount) {
+        RegistrationMeasuredData(LocalDate date, int registrationCount) {
             this.date = date;
             this.registrationCount = registrationCount;
         }

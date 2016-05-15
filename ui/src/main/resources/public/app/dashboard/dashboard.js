@@ -1,8 +1,8 @@
 function DashboardController($http) {
 	var ctrl = this;
 
-	$http.get("/stats/servers").then(function successCallback(response) {
-		ctrl.serverStats = response.data;
+	$http.get("/servers").then(function successCallback(response) {
+		ctrl.serversInfo = response.data;
 	});
 }
 

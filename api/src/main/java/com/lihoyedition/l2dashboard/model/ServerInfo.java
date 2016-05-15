@@ -8,8 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * @author Lihoy, 02.05.2016
  */
-
-public class ServerStats {
+public class ServerInfo {
 
     private int id;
     private String name;
@@ -18,9 +17,11 @@ public class ServerStats {
     private Set<ThreadStats> threadStats;
     private long memory;
     private long freeMemory;
+    private MemoryUnit memoryUnit;
 
-    public ServerStats(int id, String name, Status status, int currentOnline,
-                       Map<String, ThreadPoolExecutor> threadPoolExecutors, long memory, long freeMemory) {
+    public ServerInfo(int id, String name, Status status, int currentOnline,
+                      Map<String, ThreadPoolExecutor> threadPoolExecutors, long memory, long freeMemory,
+                      MemoryUnit memoryUnit) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -28,6 +29,12 @@ public class ServerStats {
         this.threadStats = buildThreadStats(threadPoolExecutors);
         this.memory = memory;
         this.freeMemory = freeMemory;
+        this.memoryUnit = memoryUnit;
+    }
+
+    public ServerInfo(int id, String name, Status status, int currentOnline,
+                      Map<String, ThreadPoolExecutor> threadPoolExecutors, long memory, long freeMemory) {
+        this(id, name, status, currentOnline, threadPoolExecutors, memory, freeMemory, MemoryUnit.MB);
     }
 
     public int getId() {
@@ -84,6 +91,14 @@ public class ServerStats {
 
     public void setFreeMemory(long freeMemory) {
         this.freeMemory = freeMemory;
+    }
+
+    public MemoryUnit getMemoryUnit() {
+        return memoryUnit;
+    }
+
+    public void setMemoryUnit(MemoryUnit memoryUnit) {
+        this.memoryUnit = memoryUnit;
     }
 
     private Set<ThreadStats> buildThreadStats(Map<String, ThreadPoolExecutor> threadPoolExecutors) {

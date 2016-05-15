@@ -1,8 +1,8 @@
 package com.lihoyedition.l2dashboard.service.impl;
 
-import com.lihoyedition.l2dashboard.model.ServerStats;
+import com.lihoyedition.l2dashboard.model.ServerInfo;
 import com.lihoyedition.l2dashboard.model.Status;
-import com.lihoyedition.l2dashboard.service.StatisticService;
+import com.lihoyedition.l2dashboard.service.ServerService;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,38 +18,40 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Lihoy, 02.05.2016
  */
-
 @Service
-public class StatisticServiceStubImpl implements StatisticService {
+public class ServerServiceStubImpl implements ServerService {
 
     private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
-    private Set<ServerStats> serverStats;
+    private Set<ServerInfo> serversInfo;
 
-    public StatisticServiceStubImpl() {
-        initStubStats();
+    public ServerServiceStubImpl() {
+        initStubInfo();
     }
 
     @Override
-    public Set<ServerStats> getServersStats() {
-        return serverStats;
+    public Set<ServerInfo> getServersInfo() {
+        return serversInfo;
     }
 
     @Override
-    public ServerStats getServersStats(int id) {
-        return serverStats.stream().filter(stats -> stats.getId() == id).findAny().orElse(null);
+    public ServerInfo getServerInfo(int id) {
+        return serversInfo.stream().filter(info -> info.getId() == id).findAny().orElse(null);
     }
 
-    private void initStubStats() {
-        serverStats = new LinkedHashSet<>();
-        serverStats.add(new ServerStats(1, "x1", Status.UP, RANDOM.nextInt(1000, 2000), buildStubThreadPoolExecutors(),
-                                        16_777_216, RANDOM.nextInt(16_777_216)));
-        serverStats.add(new ServerStats(2, "x50", Status.UP, RANDOM.nextInt(1000, 2000), buildStubThreadPoolExecutors(),
-                                        33_554_432, RANDOM.nextInt(33_554_432)));
-        serverStats.add(
-                new ServerStats(3, "x100", Status.UP, RANDOM.nextInt(1000, 2000), buildStubThreadPoolExecutors(),
-                                67_108_864, RANDOM.nextInt(67_108_864)));
-        serverStats.add(new ServerStats(4, "x1500", Status.DOWN, 0, null, 0, 0));
+    private void initStubInfo() {
+        serversInfo = new LinkedHashSet<>();
+        serversInfo.add(new ServerInfo(1, "x1", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 16_384,
+                                       getFreeMemory(16_384)));
+        serversInfo.add(new ServerInfo(2, "x50", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 32_768,
+                                       getFreeMemory(32_768)));
+        serversInfo.add(new ServerInfo(3, "x100", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 65_536,
+                                       getFreeMemory(65_536)));
+        serversInfo.add(new ServerInfo(4, "x1500", Status.DOWN, 0, null, 0, 0));
+    }
+
+    private int getCurrentOnline() {
+        return RANDOM.nextInt(1000, 3000);
     }
 
     private Map<String, ThreadPoolExecutor> buildStubThreadPoolExecutors() {
@@ -62,6 +64,10 @@ public class StatisticServiceStubImpl implements StatisticService {
                                 new ThreadPoolExecutorStub(5, 10, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<>()));
 
         return threadPoolExecutors;
+    }
+
+    private int getFreeMemory(int bound) {
+        return RANDOM.nextInt(bound);
     }
 
     private class ThreadPoolExecutorStub extends ThreadPoolExecutor {
