@@ -18,10 +18,11 @@ public class ServerInfo {
     private long memory;
     private long freeMemory;
     private MemoryUnit memoryUnit;
+    private long uptime;
 
     public ServerInfo(int id, String name, Status status, int currentOnline,
                       Map<String, ThreadPoolExecutor> threadPoolExecutors, long memory, long freeMemory,
-                      MemoryUnit memoryUnit) {
+                      MemoryUnit memoryUnit, long uptime) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -30,11 +31,12 @@ public class ServerInfo {
         this.memory = memory;
         this.freeMemory = freeMemory;
         this.memoryUnit = memoryUnit;
+        this.uptime = uptime;
     }
 
     public ServerInfo(int id, String name, Status status, int currentOnline,
-                      Map<String, ThreadPoolExecutor> threadPoolExecutors, long memory, long freeMemory) {
-        this(id, name, status, currentOnline, threadPoolExecutors, memory, freeMemory, MemoryUnit.MB);
+                      Map<String, ThreadPoolExecutor> threadPoolExecutors, long memory, long freeMemory, long uptime) {
+        this(id, name, status, currentOnline, threadPoolExecutors, memory, freeMemory, MemoryUnit.MB, uptime);
     }
 
     public int getId() {
@@ -99,6 +101,14 @@ public class ServerInfo {
 
     public void setMemoryUnit(MemoryUnit memoryUnit) {
         this.memoryUnit = memoryUnit;
+    }
+
+    public long getUptime() {
+        return uptime;
+    }
+
+    public void setUptime(long uptime) {
+        this.uptime = uptime;
     }
 
     private Set<ThreadStats> buildThreadStats(Map<String, ThreadPoolExecutor> threadPoolExecutors) {

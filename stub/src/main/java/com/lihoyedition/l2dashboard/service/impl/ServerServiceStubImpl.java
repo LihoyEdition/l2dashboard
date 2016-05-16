@@ -42,12 +42,12 @@ public class ServerServiceStubImpl implements ServerService {
     private void initStubInfo() {
         serversInfo = new LinkedHashSet<>();
         serversInfo.add(new ServerInfo(1, "x1", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 16_384,
-                                       getFreeMemory(16_384)));
+                                       getFreeMemory(16_384), getUptime()));
         serversInfo.add(new ServerInfo(2, "x50", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 32_768,
-                                       getFreeMemory(32_768)));
+                                       getFreeMemory(32_768), getUptime()));
         serversInfo.add(new ServerInfo(3, "x100", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 65_536,
-                                       getFreeMemory(65_536)));
-        serversInfo.add(new ServerInfo(4, "x1500", Status.DOWN, 0, null, 0, 0));
+                                       getFreeMemory(65_536), getUptime()));
+        serversInfo.add(new ServerInfo(4, "x1500", Status.DOWN, 0, null, 0, 0, 0));
     }
 
     private int getCurrentOnline() {
@@ -68,6 +68,10 @@ public class ServerServiceStubImpl implements ServerService {
 
     private int getFreeMemory(int bound) {
         return RANDOM.nextInt(bound);
+    }
+
+    private long getUptime() {
+        return RANDOM.nextLong(86_400_000, 604_800_000);
     }
 
     private class ThreadPoolExecutorStub extends ThreadPoolExecutor {
