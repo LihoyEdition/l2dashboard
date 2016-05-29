@@ -26,8 +26,23 @@ public class ServerController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ServerInfo getServerInfo(@PathVariable("id") String id) {
-        return serverService.getServerInfo(Integer.parseInt(id));
+    public ServerInfo getServerInfo(@PathVariable("id") int id) {
+        return serverService.getServerInfo(id);
+    }
+
+    @RequestMapping(value = "/{id}/start", method = RequestMethod.POST)
+    public void startServer(@PathVariable("id") int id) {
+        serverService.start(id);
+    }
+
+    @RequestMapping(value = "/{id}/shutdown", method = RequestMethod.POST)
+    public void shutdownServer(@PathVariable("id") int id) {
+        serverService.shutdown(id);
+    }
+
+    @RequestMapping(value = "/{id}/restart", method = RequestMethod.POST)
+    public void restartServer(@PathVariable("id") int id) {
+        serverService.restart(id);
     }
 
 }

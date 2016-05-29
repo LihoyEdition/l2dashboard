@@ -4,6 +4,35 @@ function DashboardController($http) {
 	$http.get("/servers").then(function successCallback(response) {
 		ctrl.serversInfo = response.data;
 	});
+
+	ctrl.startServer = function (id) {
+		ctrl.actionButtonDisabled = true;
+		$http.post("/servers/" + id + "/start").then(function successCallback() {
+			ctrl.refreshServerInfo(id);
+		});
+	};
+
+	ctrl.shutdownServer = function (id) {
+		$http.post("/servers/" + id + "/shutdown").then(function successCallback() {
+			ctrl.refreshServerInfo(id);
+		});
+	};
+
+	ctrl.restartServer = function (id) {
+		$http.post("/servers/" + id + "/restart").then(function successCallback() {
+			ctrl.refreshServerInfo(id);
+		});
+	};
+
+	ctrl.refreshServerInfo = function (id) {
+		$http.get("/servers/" + id).then(function successCallback(response) {
+			ctrl.serversInfo.forEach(function (serverInfo, index) {
+				if (serverInfo.id == id) {
+					ctrl.serversInfo[index] = response.data;
+				}
+			})
+		});
+	};
 }
 
 const DashboardComponent = {

@@ -35,4 +35,22 @@ public class ServerServiceStubImpl implements ServerService {
         return serversInfo.stream().filter(info -> info.getId() == id).findAny().orElse(null);
     }
 
+    @Override
+    public void start(int id) {
+        // Imagine that server will be started :)
+        stubDataInitializer.updateStubServerInfo(id, false);
+    }
+
+    @Override
+    public void shutdown(int id) {
+        // Imagine that server will be stopped :)
+        stubDataInitializer.updateStubServerInfo(id, true);
+    }
+
+    @Override
+    public void restart(int id) {
+        // Imagine that server will be restarted :)
+        stubDataInitializer.updateStubServerInfo(id, false);
+    }
+
 }

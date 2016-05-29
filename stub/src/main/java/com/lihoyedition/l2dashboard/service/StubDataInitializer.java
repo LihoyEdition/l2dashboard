@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,7 +25,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class StubDataInitializer {
 
-    private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+    private static final int TOTAL_MEMORY = 16_384;
+
+    private static Map<Integer, String> servers;
 
     private Set<OnlineHistory> onlineHistories;
     private RegistrationHistory registrationHistory;
@@ -32,6 +35,12 @@ public class StubDataInitializer {
     private Set<ServerInfo> serversInfo;
 
     public StubDataInitializer() {
+        servers = new HashMap<>();
+        servers.put(1, "x1");
+        servers.put(2, "x10");
+        servers.put(3, "x50");
+        servers.put(4, "x1500");
+
         initStubHistory();
         initStubServersInfo();
     }
@@ -50,47 +59,64 @@ public class StubDataInitializer {
 
     private void initStubHistory() {
         onlineHistories = new HashSet<>();
+
+        for (Map.Entry<Integer, String> entry : servers.entrySet()) {
+            OnlineHistory onlineHistory = new OnlineHistory(entry.getKey());
+
+            for (LocalDate date = LocalDate.of(2013 + getRandom().nextInt(0, 3), 1, 1); date.isBefore(
+                    LocalDate.now()); date = date.plusDays(1)) {
+                int base = entry.getKey() * 1000;
+                int maxOnline = getRandom().nextInt(base, (int) (1.25 * base));
+                int avgOnline = getRandom().nextInt((int) (0.75 * base), base);
+                onlineHistory.add(date, maxOnline, avgOnline);
+                onlineHistories.add(onlineHistory);
+            }
+        }
+
         registrationHistory = new RegistrationHistory();
-
-        OnlineHistory onlineHistory = new OnlineHistory(1);
         for (LocalDate date = LocalDate.of(2013, 1, 1); date.isBefore(LocalDate.now()); date = date.plusDays(1)) {
-            onlineHistory.add(date, RANDOM.nextInt(2000, 3000), RANDOM.nextInt(1000, 2000));
-            onlineHistories.add(onlineHistory);
-            registrationHistory.add(date, RANDOM.nextInt(100, 200));
+            registrationHistory.add(date, getRandom().nextInt(100, 200));
         }
+    }
 
-        onlineHistory = new OnlineHistory(2);
-        for (LocalDate date = LocalDate.of(2014, 1, 1); date.isBefore(LocalDate.now()); date = date.plusDays(1)) {
-            onlineHistory.add(date, RANDOM.nextInt(3000, 3500), RANDOM.nextInt(2500, 3000));
-            onlineHistories.add(onlineHistory);
-        }
-
-        onlineHistory = new OnlineHistory(3);
-        for (LocalDate date = LocalDate.of(2015, 1, 1); date.isBefore(LocalDate.now()); date = date.plusDays(1)) {
-            onlineHistory.add(date, RANDOM.nextInt(5000, 5500), RANDOM.nextInt(4700, 5000));
-            onlineHistories.add(onlineHistory);
-        }
-
-        onlineHistory = new OnlineHistory(4);
-        for (LocalDate date = LocalDate.of(2016, 1, 1); date.isBefore(LocalDate.now()); date = date.plusDays(1)) {
-            onlineHistory.add(date, RANDOM.nextInt(800, 1000), RANDOM.nextInt(500, 800));
-            onlineHistories.add(onlineHistory);
-        }
+    private ThreadLocalRandom getRandom() {
+        return ThreadLocalRandom.current();
     }
 
     private void initStubServersInfo() {
         serversInfo = new LinkedHashSet<>();
-        serversInfo.add(new ServerInfo(1, "x1", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 16_384,
-                                       getFreeMemory(16_384), getUptime()));
-        serversInfo.add(new ServerInfo(2, "x50", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 32_768,
-                                       getFreeMemory(32_768), getUptime()));
-        serversInfo.add(new ServerInfo(3, "x100", Status.UP, getCurrentOnline(), buildStubThreadPoolExecutors(), 65_536,
-                                       getFreeMemory(65_536), getUptime()));
-        serversInfo.add(new ServerInfo(4, "x1500", Status.DOWN, 0, null, 0, 0, 0));
+
+        for (Map.Entry<Integer, String> entry : servers.entrySet()) {
+            if (getRandom().nextBoolean()) {
+                serversInfo.add(new ServerInfo(entry.getKey(), entry.getValue(), Status.UP, getCurrentOnline(),
+                                               buildStubThreadPoolExecutors(), TOTAL_MEMORY, getFreeMemory(),
+                                               getUptime()));
+            } else {
+                serversInfo.add(new ServerInfo(entry.getKey(), entry.getValue(), Status.DOWN, 0, null, 0, 0, 0));
+            }
+        }
+    }
+
+    public void updateStubServerInfo(int id, boolean isDown) {
+        Optional<ServerInfo> serverInfoOptional = serversInfo.stream().filter(info -> info.getId() == id).findAny();
+        if (serverInfoOptional.isPresent()) {
+            ServerInfo serverInfo = serverInfoOptional.get();
+            if (!isDown) {
+                serverInfo.setStatus(Status.UP);
+                serverInfo.setCurrentOnline(getCurrentOnline());
+                serverInfo.setFreeMemory(getFreeMemory());
+                serverInfo.setUptime(getUptime());
+            } else {
+                serverInfo.setStatus(Status.DOWN);
+                serverInfo.setCurrentOnline(0);
+                serverInfo.setFreeMemory(0);
+                serverInfo.setUptime(0);
+            }
+        }
     }
 
     private int getCurrentOnline() {
-        return RANDOM.nextInt(1000, 3000);
+        return getRandom().nextInt(1000, 3000);
     }
 
     private Map<String, ThreadPoolExecutor> buildStubThreadPoolExecutors() {
@@ -105,12 +131,12 @@ public class StubDataInitializer {
         return threadPoolExecutors;
     }
 
-    private int getFreeMemory(int bound) {
-        return RANDOM.nextInt(bound);
+    private int getFreeMemory() {
+        return getRandom().nextInt(TOTAL_MEMORY);
     }
 
     private long getUptime() {
-        return RANDOM.nextLong(86_400_000, 604_800_000);
+        return getRandom().nextLong(86_400_000, 604_800_000);
     }
 
     private class ThreadPoolExecutorStub extends ThreadPoolExecutor {
@@ -127,22 +153,22 @@ public class StubDataInitializer {
 
         @Override
         public int getPoolSize() {
-            return RANDOM.nextInt(corePoolSize, maximumPoolSize);
+            return getRandom().nextInt(corePoolSize, maximumPoolSize);
         }
 
         @Override
         public int getActiveCount() {
-            return RANDOM.nextInt(corePoolSize / 2);
+            return getRandom().nextInt(corePoolSize / 2);
         }
 
         @Override
         public int getLargestPoolSize() {
-            return RANDOM.nextInt(maximumPoolSize);
+            return getRandom().nextInt(maximumPoolSize);
         }
 
         @Override
         public long getCompletedTaskCount() {
-            return RANDOM.nextInt(100, 200);
+            return getRandom().nextInt(100, 200);
         }
 
         @Override

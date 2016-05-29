@@ -13,4 +13,10 @@ public interface ServerService {
 
     ServerInfo getServerInfo(int id);
 
+    void start(int id);
+
+    void shutdown(int id);
+
+    void restart(int id);
+
 }

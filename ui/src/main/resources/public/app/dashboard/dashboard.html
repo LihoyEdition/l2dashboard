@@ -3,7 +3,13 @@
 		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="server in $ctrl.serversInfo">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					{{server.name}} [id = {{server.id}}]
+					<div class="panel-title">
+						{{server.name}} [id = {{server.id}}]
+						<button type="button" class="btn btn-default btn-sm pull-right" title="Refresh"
+								ng-click="$ctrl.refreshServerInfo(server.id)">
+							<i class="glyphicon glyphicon-refresh"></i>
+						</button>
+					</div>
 				</div>
 				<div class="panel-body">
 					<p>Status:
@@ -14,6 +20,19 @@
 					<p>Current online: {{server.currentOnline}}</p>
 					<p>Uptime: {{server.uptime | duration}}</p>
 					<p>Free memory: {{server.freeMemory}} {{server.memoryUnit}}</p>
+
+					<button type="button" class="btn btn-success btn-sm" title="Start"
+							ng-show="server.status == 'DOWN'" ng-click="$ctrl.startServer(server.id)">
+						<i class="glyphicon glyphicon-play"></i>
+					</button>
+					<button type="button" class="btn btn-danger btn-sm" title="Shutdown"
+							ng-show="server.status == 'UP'" ng-click="$ctrl.shutdownServer(server.id)">
+						<i class="glyphicon glyphicon-off"></i>
+					</button>
+					<button type="button" class="btn btn-warning btn-sm" title="Restart"
+							ng-show="server.status == 'UP'" ng-click="$ctrl.restartServer(server.id)">
+						<i class="glyphicon glyphicon-repeat"></i>
+					</button>
 				</div>
 			</div>
 		</div>
